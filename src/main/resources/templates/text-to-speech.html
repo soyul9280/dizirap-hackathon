@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>당신의 목소리를 기억해요</title>
+    <link rel="stylesheet" href="/css/tts.css">
+</head>
+<body>
+<!-- 내비게이션 바 -->
+<div class="navbar">
+    <h1>세라핌</h1>
+    <a href="/" class="button home-btn btnPush btnPurple" title="Button push purple">홈으로</a>
+</div>
+
+<!-- 곰돌이 귀 버튼 -->
+<div class="toggle-buttons">
+    <button id="soundButton" class="toggle-btn active">소리내기</button>
+    <button id="singButton" class="toggle-btn">노래하기</button>
+</div>
+
+<!-- 소리내기 컨테이너 -->
+<div id="soundContainer" class="container">
+    <h1>당신의 목소리를 기억하고 있어요.<br> 마음의 말을 적어보세요.</h1>
+
+    <!-- 텍스트 입력 폼 -->
+    <form id="textForm">
+        <textarea id="inputText" placeholder="하고싶은 말을 적어주세요..." rows="5"></textarea>
+        <button type="submit" class="button submit-btn btnPush btnPurple">소리내기</button>
+    </form>
+
+    <!-- API 응답 상태 -->
+    <p id="statusMessage"></p>
+
+    <h2>나의 목소리</h2>
+    <div class="table-container">
+        <table id="audioTable">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>이름</th>
+                <th>재생</th>
+            </tr>
+            </thead>
+            <tbody id="audioList"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 노래하기 컨테이너 -->
+<div id="singContainer" class="container hidden">
+    <h1>당신의 목소리로 <br> 세상에 따뜻함을 더해주세요.</h1>
+    <textarea id="songInput" placeholder="노래할 가사를 입력하세요..." rows="5"></textarea>
+    <input type="url" id="songUrl" placeholder="부르고 싶은 노래의 URL을 입력하세요..." />
+    <button class="button submit-btn btnPush btnPurple" id="singSubmit">노래하기</button>
+
+    <h2>나의 노래</h2>
+    <div class="table-container">
+        <table id="songTable">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>이름</th>
+                <th>재생</th>
+            </tr>
+            </thead>
+            <tbody id="songList"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 결과 오디오 재생 -->
+<div class="audio-container">
+    <audio id="audioPlayback" controls style="display:none;">
+        <source src="" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+</div>
+
+<script>
+    const soundButton = document.getElementById("soundButton");
+    const singButton = document.getElementById("singButton");
+    const soundContainer = document.getElementById("soundContainer");
+    const singContainer = document.getElementById("singContainer");
+    const audioPlayback = document.getElementById("audioPlayback");
+
+    soundButton.addEventListener("click", () => {
+        soundContainer.classList.remove("hidden");
+        singContainer.classList.add("hidden");
+        soundButton.classList.add("active");
+        singButton.classList.remove("active");
+
+        audioPlayback.style.display = 'none';
+        audioPlayback.pause(); // 오디오 재생 중단
+        audioPlayback.src = ''; // 오디오 소스 초기화
+    });
+
+    singButton.addEventListener("click", () => {
+        singContainer.classList.remove("hidden");
+        soundContainer.classList.add("hidden");
+        singButton.classList.add("active");
+        soundButton.classList.remove("active");
+
+        audioPlayback.style.display = 'none';
+        audioPlayback.pause(); // 오디오 재생 중단
+        audioPlayback.src = ''; // 오디오 소스 초기화
+    });
+
+    // 텍스트 전송 처리
+    document.getElementById('textForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const inputText = document.getElementById('inputText').value;
+        const statusMessage = document.getElementById('statusMessage');
+
+        if (!inputText) {
+            statusMessage.textContent = "하고싶은 말을 적어주세요...";
+            return;
+        }
+
+        statusMessage.textContent = "당신의 목소리를 만들고 있어요...";
+
+        try {
+            const response = await fetch('/process-text', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: inputText })
+            });
+
+            if (!response.ok) throw new Error('텍스트 처리 실패');
+
+            const result = await response.json();
+            if (result.filePath) {
+                audioPlayback.src = result.filePath;
+                audioPlayback.style.display = 'block';
+                audioPlayback.play();
+                statusMessage.textContent = "목소리가 준비되었어요. 재생 버튼을 눌러보세요.";
+                updateAudioList();
+            } else {
+                statusMessage.textContent = "목소리 만들기를 실패했어요.";
+            }
+        } catch (error) {
+            console.error('텍스트 처리 중 오류 발생:', error);
+            statusMessage.textContent = "오류가 발생했습니다. 다시 시도해주세요.";
+        }
+    });
+
+    async function updateAudioList() {
+        const audioListElement = document.getElementById('audioList');
+        audioListElement.innerHTML = ''; // 기존 내용 초기화
+
+        try {
+            const response = await fetch('/audio-files');
+            if (!response.ok) throw new Error('API 응답 실패');
+            const audioFiles = await response.json();
+
+            if (audioFiles && audioFiles.length > 0) {
+                audioFiles.forEach((filePath, index) => {
+                    const row = document.createElement('tr');
+
+                    const numberCell = document.createElement('td');
+                    numberCell.textContent = index + 1;
+                    row.appendChild(numberCell);
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = filePath.replace('/upload/', '').replace('.wav', '');
+                    row.appendChild(nameCell);
+
+                    const playCell = document.createElement('td');
+                    const playButton = document.createElement('button');
+                    playButton.textContent = "재생";
+                    playButton.classList.add('audio-play-btn');
+                    playButton.onclick = () => playAudio(filePath);
+                    playCell.appendChild(playButton);
+                    row.appendChild(playCell);
+
+                    audioListElement.appendChild(row);
+                });
+            } else {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 3;
+                cell.textContent = "당신의 목소리를 찾을 수 없어요.";
+                cell.style.textAlign = "center";
+                row.appendChild(cell);
+                audioListElement.appendChild(row);
+            }
+        } catch (error) {
+            console.error('오디오 파일 목록 가져오기 실패:', error);
+            const row = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 3;
+            cell.textContent = "오디오 파일을 가져오는 중 오류가 발생했습니다.";
+            cell.style.textAlign = "center";
+            row.appendChild(cell);
+            audioListElement.appendChild(row);
+        }
+    }
+
+    async function updateSongList() {
+        const songListElement = document.getElementById('songList');
+        songListElement.innerHTML = ''; // 기존 내용 초기화
+
+        try {
+            const response = await fetch('/song-files');
+            if (!response.ok) throw new Error('API 응답 실패');
+            const songFiles = await response.json();
+
+            if (songFiles && songFiles.length > 0) {
+                songFiles.forEach((filePath, index) => {
+                    const row = document.createElement('tr');
+
+                    const numberCell = document.createElement('td');
+                    numberCell.textContent = index + 1;
+                    row.appendChild(numberCell);
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = filePath.replace('/upload/', '').replace('.wav', '');
+                    row.appendChild(nameCell);
+
+                    const playCell = document.createElement('td');
+                    const playButton = document.createElement('button');
+                    playButton.textContent = "재생";
+                    playButton.classList.add('audio-play-btn');
+                    playButton.onclick = () => playAudio(filePath);
+                    playCell.appendChild(playButton);
+                    row.appendChild(playCell);
+
+                    songListElement.appendChild(row);
+                });
+            } else {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 3;
+                cell.textContent = "노래 파일이 없습니다.";
+                cell.style.textAlign = "center";
+                row.appendChild(cell);
+                songListElement.appendChild(row);
+            }
+        } catch (error) {
+            console.error('노래 파일 목록 가져오기 실패:', error);
+            const row = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 3;
+            cell.textContent = "세상에 새겨진 노래가 없네요...";
+            cell.style.textAlign = "center";
+            row.appendChild(cell);
+            songListElement.appendChild(row);
+        }
+    }
+
+    function playAudio(filePath) {
+        audioPlayback.src = filePath;
+        audioPlayback.style.display = 'block';
+        audioPlayback.play();
+    }
+
+    updateAudioList();
+    updateSongList();
+</script>
+</body>
+</html>

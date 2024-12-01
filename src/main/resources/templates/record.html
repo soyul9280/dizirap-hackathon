@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Project - 파일 업로드 및 녹음</title>
+  <link rel="stylesheet" href="/css/record.css"> <!-- 스타일 시트를 별도로 연결 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<div class="upload-container">
+  <!-- 홈 버튼 추가 -->
+  <a href="/" class="home-btn">홈</a>
+  <h1>AI 목소리를 선물하세요</h1>
+  <div class="tab-buttons">
+    <button id="uploadTabButton">파일 업로드</button>
+    <button id="recordTabButton">실시간 녹음</button>
+  </div>
+
+  <!-- 실시간 녹음 UI -->
+  <div id="recordContent" class="content active">
+    <h2>실시간 음성 녹음</h2>
+    <button id="startRecord">녹음 시작</button>
+    <button id="stopRecord" disabled>녹음 중지</button>
+    <p id="recordingStatus">녹음 상태: 대기 중</p>
+    <audio id="audioPlayback" controls style="display: none;"></audio>
+    <div style="margin-top: 15px;">
+      <button id="saveRecording" style="display: none;">녹음 파일 저장</button>
+    </div>
+  </div>
+
+  <!-- 파일 업로드 UI -->
+  <div id="uploadContent" class="content">
+    <h2>음성 파일 업로드</h2>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="voiceFile" id="fileInput" />
+      <button type="submit">업로드</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // 버튼 및 콘텐츠 요소 가져오기
+  const uploadTabButton = document.getElementById('uploadTabButton');
+  const recordTabButton = document.getElementById('recordTabButton');
+  const uploadContent = document.getElementById('uploadContent');
+  const recordContent = document.getElementById('recordContent');
+
+  // 초기 상태: 모든 콘텐츠 숨기기
+  function initializeUI() {
+    recordContent.classList.remove('active'); // 실시간 녹음 UI 숨기기
+    uploadContent.classList.remove('active'); // 파일 업로드 UI 숨기기
+  }
+
+  // 파일 업로드 버튼 클릭 시
+  uploadTabButton.addEventListener('click', () => {
+    uploadContent.classList.add('active'); // 파일 업로드 UI 보이기
+    recordContent.classList.remove('active'); // 실시간 녹음 UI 숨기기
+  });
+
+  // 실시간 녹음 버튼 클릭 시
+  recordTabButton.addEventListener('click', () => {
+    recordContent.classList.add('active'); // 실시간 녹음 UI 보이기
+    uploadContent.classList.remove('active'); // 파일 업로드 UI 숨기기
+  });
+
+  // 초기 UI 설정
+  initializeUI();
+
+  // 녹음 기능 추가
+  let mediaRecorder;
+  let recordedChunks = [];
+  const startButton = document.getElementById('startRecord');
+  const stopButton = document.getElementById('stopRecord');
+  const recordingStatus = document.getElementById('recordingStatus');
+  const audioPlayback = document.getElementById('audioPlayback');
+  const saveRecordingButton = document.getElementById('saveRecording');
+
+  // 녹음 시작
+  startButton.addEventListener('click', async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+
+      recordedChunks = [];
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) recordedChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        audioPlayback.src = audioUrl;
+        audioPlayback.style.display = 'block';
+        saveRecordingButton.style.display = 'inline-block';
+
+        // 녹음 파일 저장 버튼 이벤트
+        saveRecordingButton.addEventListener('click', () => {
+          const a = document.createElement('a');
+          a.href = audioUrl;
+          a.download = 'recording.wav';
+          a.click();
+        });
+      };
+
+      mediaRecorder.start();
+      recordingStatus.textContent = '녹음 상태: 녹음 중...';
+      startButton.disabled = true;
+      stopButton.disabled = false;
+    } catch (error) {
+      alert('마이크 접근 권한이 필요합니다.');
+      console.error('Error accessing microphone:', error);
+    }
+  });
+
+  // 녹음 중지
+  stopButton.addEventListener('click', () => {
+    mediaRecorder.stop();
+    recordingStatus.textContent = '녹음 상태: 완료';
+    startButton.disabled = false;
+    stopButton.disabled = true;
+  });
+
+</script>
+</body>
+</html>

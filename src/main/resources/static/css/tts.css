@@ -1,0 +1,243 @@
+body {
+    font-family: 'Do Hyeon', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* 내비게이션 바 */
+.navbar {
+    display: flex;
+    justify-content: space-between; /* 양쪽 끝으로 배치 */
+    align-items: center;
+    background-color: #ffffff;
+    padding: 5px 15px;
+    color: white;
+    height: 50px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 얇은 그림자 */
+}
+
+.navbar h1 {
+    font-size: 1.5rem;
+    margin: 40px;
+    color: #4200A2;
+}
+
+/* 버튼 스타일 */
+a.button, button.button {
+    display: block;
+    position: relative;
+    padding: 0;
+    font-size: 20px;
+    margin: 10px 20px 10px 0;
+    text-align: center;
+    line-height: 50px;
+    color: #FFF;
+    border-radius: 5px;
+    transition: all 0.2s;
+    text-decoration: none;
+    position: relative;
+}
+
+/* 홈 버튼 색상 */
+.btnPurple {
+    background: #4200A2;
+}
+
+/* 3D 효과 */
+.btnPurple.btnPush {
+    box-shadow: 0px 5px 0px 0px #4200A2;
+}
+
+.btnPush:hover {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.btnPurple.btnPush:hover {
+    box-shadow: 0px 0px 0px 0px #4200A2;
+}
+
+/* 내비게이션 홈 버튼 */
+.navbar a.home-btn {
+    width: 100px;
+    height: 40px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+    color: #FFF;
+}
+
+/* 공통 hover 효과 */
+a.button:hover, button.button:hover {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    box-shadow: 0px 0px 0px 0px #6D184B;
+}
+
+/* 전송 버튼 */
+.container button.submit-btn {
+    position: absolute;
+    border: none;
+    text-align: center;
+    width: 100px;
+    box-shadow: 0px 5px 0px 0px #4200A2;
+    height: 45px;
+    font-weight: 600;
+    font-size: 20px;
+    color: #FFF;
+}
+
+.container {
+    width: 90%;
+    max-width: 600px;
+    background: linear-gradient(135deg, #ad9fe9, #f3e6ff);
+    padding: 20px 30px;
+    border-radius: 0 0 20px 20px; /* 곰돌이 귀 버튼과 연결되도록 상단 둥근 모서리 제거 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* 그림자 */
+    text-align: center;
+    margin: 50px auto; /* 곰돌이 버튼과 간격 조정 */
+}
+
+/* 제목 스타일 */
+h1 {
+    font-size: 2rem;
+    color: #4200A2;
+    margin-bottom: 20px;
+}
+
+/* 텍스트 입력 폼 스타일 */
+textarea {
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: none; /* 크기 조정 비활성화 */
+    box-sizing: border-box;
+}
+
+/* URL 입력 필드 스타일 */
+#songUrl {
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px;
+    margin-bottom: 20px; /* 입력 칸과 버튼 간격 */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* 상태 메시지 스타일 */
+#statusMessage {
+    color: #555;
+    margin: 20px 0;
+    font-size: 1rem;
+}
+
+/* 오디오 플레이어 스타일 */
+.audio-container {
+    text-align: center;
+    margin-top: -30px; /* 컨테이너와의 간격 */
+}
+
+audio {
+    display: block; /* 블록 요소로 설정하여 중앙 정렬 가능 */
+    margin: 10px auto; /* 수평 가운데 정렬 */
+    width: 40%; /* 적당한 크기 */
+    height: 60px; /* 적당한 높이 */
+}
+
+/* 테이블을 감싸는 컨테이너 */
+.table-container {
+    max-height: 200px; /* 최대 높이 설정 */
+    overflow-y: auto;  /* 세로 스크롤 추가 */
+    border: 1px solid #ddd; /* 경계선 */
+    border-radius: 10px;
+    background-color: #fff; /* 배경색 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* 그림자 */
+}
+
+/* 테이블 스타일 */
+#audioTable, #songTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 16px;
+    background-color: #f3e6ff;
+}
+
+/* 테이블 헤더 */
+#audioTable thead tr, #songTable thead tr {
+    background-color: #4200A2;
+    color: white;
+    position: sticky; /* 스크롤 시 고정 */
+    top: 0; /* 고정 위치 */
+    z-index: 1; /* 헤더가 다른 요소 위로 올라오도록 설정 */
+}
+
+#audioTable th, #audioTable td, #songTable th, #songTable td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#audioTable tbody tr:hover, #songTable tbody tr:hover {
+    background-color: #f0e3ff;
+}
+
+/* 재생 버튼 스타일 */
+.audio-play-btn {
+    background-color: #6D184B;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.audio-play-btn:hover {
+    background-color: #4200A2;
+}
+
+/* 곰돌이 귀 버튼 컨테이너 */
+.toggle-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+    top: 50px; /* 컨테이너 바로 위로 조정 */
+    z-index: 10;
+}
+
+/* 곰돌이 귀 버튼 */
+.toggle-btn {
+    background-color: #f3e6ff;
+    border: 2px solid #4200A2;
+    border-radius: 20px 20px 0 0; /* 위쪽만 둥글게 */
+    border-bottom: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #4200A2;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* 활성화된 버튼 스타일 */
+.toggle-btn.active {
+    background-color: #4200A2;
+    color: #fff;
+}
+
+/* 비활성화된 버튼 hover 효과 */
+.toggle-btn:hover {
+    background-color: #ad9fe9;
+    color: #fff;
+}
+
+/* 숨김 클래스 */
+.hidden {
+    display: none;
+}

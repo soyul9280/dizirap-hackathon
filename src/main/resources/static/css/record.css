@@ -1,0 +1,91 @@
+
+body {
+      font-family: 'Do Hyeon', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+   .upload-container {
+     position: relative; /* 홈 버튼의 상대적 위치를 적용하기 위해 필요 */
+     text-align: center;
+     padding: 30px;
+     background-color: #ffffff;
+     border-radius: 16px;
+     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+     width: 90%;
+     max-width: 500px;
+     margin: 0 auto;
+   }
+
+    h1 {
+      color: #333;
+      margin: 15px 0;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+  .home-btn {
+    display: inline-block;
+    position: absolute; /* 위치를 컨테이너의 상대적인 위치로 설정 */
+    top: 20px; /* 컨테이너 내부 상단에서의 여백 */
+    left: 20px; /* 컨테이너 내부 왼쪽에서의 여백 */
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+  }
+
+  .home-btn:hover {
+    background-color: #45a049;
+  }
+
+   .content {
+     display: none; /* 기본적으로 숨기기 */
+   }
+
+   .content.active {
+     display: block; /* active 클래스가 추가되면 보이도록 설정 */
+   }
+
+    input[type="file"] {
+      margin: 20px 0;
+      padding: 12px;
+      border: 2px dashed #4CAF50;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      width: 100%;
+      max-width: 400px;
+      cursor: pointer;
+    }
+
+    audio {
+      margin-top: 15px;
+      width: 100%; /* 또는 원하는 너비로 설정 */
+      max-width: 400px; /* 적당한 최대 너비 설정 */
+      display: block; /* block 요소로 변경하여 중앙 정렬 가능 */
+      margin-left: auto; /* 좌우 중앙 정렬 */
+      margin-right: auto; /* 좌우 중앙 정렬 */
+    }

@@ -1,0 +1,375 @@
+/* 기본 스타일 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Do Hyeon', sans-serif;
+    background: linear-gradient(135deg, #ffffff, #e5d8ff, #ffffff, #e5d8ff);
+    background-size: 200% 200%; /* 물결처럼 느껴지도록 크기 조정 */
+    animation: waveEffect 8s ease-in-out infinite; /* 색상과 움직임 애니메이션 */
+}
+
+@keyframes waveEffect {
+    0% {
+        background-position: 0% 50%;
+    }
+    25% {
+        background-position: 50% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    75% {
+        background-position: 50% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+#section1 {
+    height: 100vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+
+#section2 {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 20px;
+    gap: 30px;
+    box-sizing: border-box;
+}
+#recordNewContainer {
+    display: flex; /* 가로로 배치 */
+    justify-content: center; /* 자식 컨테이너를 양쪽 끝으로 배치 */
+    align-items: flex-start; /* 컨테이너 상단 정렬 */
+    gap: 60px; /* 컨테이너 간 간격 */
+    width: 150%; /* 부모 컨테이너의 너비를 설정 (중앙 정렬을 위해 적절한 값 설정) */
+    margin: 0 ; /* 중앙 정렬 */
+    padding: 20px; /* 내부 여백 */
+    transform: translateX(-15.5%);
+    visibility: hidden; /* 기본적으로 숨김 */
+    opacity: 0; /* 투명도 설정 */
+    max-width: 1000px;
+    transition: visibility 0.3s, opacity 0.3s ease-in-out; /* 애니메이션 */
+}
+#recordNewContainer.visible {
+    visibility: visible;
+    opacity: 1;
+}
+#recordingStatus {
+    margin-top: 20px; /* 위 버튼들과의 간격 */
+    font-size: 16px; /* 텍스트 크기 조정 */
+    text-align: center; /* 중앙 정렬 */
+}
+
+#recordContainer,
+#newUI {
+    flex: 1; /* 동일한 비율로 공간 차지 */
+    max-width: 50%; /* 컨테이너의 최대 너비를 설정 (부모 컨테이너의 45%) */
+    padding: 20px; /* 내부 여백 */
+    background-color: #ffffff; /* 배경색 */
+    border-radius: 10px; /* 둥근 모서리 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+/* 실시간 녹음 컨테이너 및 녹음본 사용 컨테이너 내 버튼 */
+#recordNewContainer button, #uploadContent button {
+    position: relative;
+    display: inline-block;
+    width: 160px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    text-align: center;
+    font-family: sans-serif;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: #4200A2; /* 배경색 */
+    color: #fff; /* 텍스트 색상 */
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+/* 버튼 텍스트 기본 표시 */
+#recordNewContainer button, #uploadContent button {
+    color: #ffffff; /* 텍스트 색상 */
+}
+
+/* 버튼 호버 효과 */
+#recordNewContainer button:hover, #uploadContent button:hover {
+    transform: scale(1.05); /* 크기 확대 효과 */
+}
+
+/* 가상 요소 제거 */
+#recordNewContainer button:before, #uploadContent button:before,
+#recordNewContainer button:after, #uploadContent button:after {
+    content: none; /* 가상 요소 제거 */
+}
+
+#recordContainer {
+    display: flex;
+    justify-content: center; /* 버튼을 가로로 중앙 정렬 */
+    align-items: center; /*버튼을 세로로 중앙 정렬 */
+    gap: 20px; /* 버튼 사이 간격 */
+    flex-wrap: wrap; /* 버튼이 공간 부족 시 다음 줄로 이동 가능 */
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    box-sizing: border-box;
+}
+#startRecord, #stopRecord {
+    width: 150px; /* 버튼 너비 */
+    height: 50px; /* 버튼 높이 */
+    font-size: 16px; /* 텍스트 크기 */
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    transition: transform 0.3s, background-color 0.3s;
+}
+#startRecord {
+    background-color: #4200A2; /* 녹음 시작 버튼 색상 */
+    color: white;
+}
+#stopRecord {
+    background-color: #7445E0; /* 녹음 중지 버튼 색상 */
+    color: white;
+}
+#startRecord:hover, #stopRecord:hover {
+    transform: scale(1.1); /* 호버 시 크기 확대 */
+}
+#startRecord:disabled {
+    background-color: #ccc; /* 비활성화 상태 색상 */
+    cursor: not-allowed;
+}
+#stopRecord:disabled {
+    background-color: #f88; /* 비활성화 상태 색상 */
+    cursor: not-allowed;
+}
+
+.container-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+}
+
+.choose-containers {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s, opacity 0.3s;
+}
+.choose-containers.hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.choose-containers.visible {
+    visibility: visible;
+    opacity: 1;
+}
+.choose-container {
+    flex: 1; /* 동일한 비율로 공간을 차지 */
+    max-width: 70%; /* 각 컨테이너의 최대 너비를 설정 */
+    padding: 20px; /* 내부 여백 */
+    background-color: #fff; /* 배경색 */
+    border-radius: 16px; /* 둥근 모서리 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* 그림자 효과 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    visibility: hidden; /* 기본적으로 숨김 */
+    opacity: 0; /* 투명도 설정 */
+    transition: visibility 0.3s, opacity 0.3s ease-in-out; /* 애니메이션 */
+}
+
+.choose-container.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+
+
+
+/* 제목 스타일 */
+h1 {
+    font-size: 8rem;
+    margin-top: -4px;
+    margin-left: 50px;
+    margin-bottom: 40px;
+    background: linear-gradient(to right top, #4200A2, #ffa69e);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* 소개글 스타일 */
+.intro-text {
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 50px;
+    margin-left: 50px;
+    color: #555;
+    line-height: 1.8;
+}
+
+/* 버튼 스타일 */
+a, button {
+    position: relative;
+    display: inline-block;
+    width: 160px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    text-align: center;
+    font-family: sans-serif;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: #ccc;
+    overflow: hidden; /* 버튼 내부에서 초과된 요소를 숨김 */
+    cursor: pointer;
+}
+
+a:before, button:before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background: #2A0070;
+    color: #fff;
+    transition: 0.5s;
+    transform-origin: bottom;
+    transform: translateY(-100%) rotateX(90deg);
+}
+
+a:hover:before, button:hover:before {
+    transform: translateY(0) rotateX(0deg);
+}
+
+a:after, button:after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background: #4200A2;
+    color: #fff;
+    transition: 0.5s;
+    transform-origin: top;
+    transform: translateY(0) rotateX(0deg);
+}
+
+a:hover:after, button:hover:after {
+    transform: translateY(100%) rotateX(90deg);
+}
+
+/* 버튼 컨테이너 스타일 */
+.button-container {
+    display: flex;
+    gap: 20px;
+    margin-left: 50px;
+}
+
+.button-container-horizontal {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* 오른쪽 이미지 */
+.image-container {
+    flex: 1;
+    max-width: 600px;
+    text-align: center;
+    margin-right: 290px;
+}
+
+.image-container img {
+    max-width: 140%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 6px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+/* 돌아가기 버튼 스타일 */
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: transform 0.2s ease;
+    transform: rotate(180deg);
+}
+
+/* 180도 회전 */
+.back-button.flipped {
+    transform: rotate(180deg);
+}
+
+.back-button:hover {
+    transform: scale(1.1) rotate(180deg); /* 호버 시 크기 확대 및 회전 유지 */
+}
+
+audio {
+    display: block;
+    margin: 10px auto;
+    width: 80%;
+    max-width: 400px;
+}
+
+/* 반응형 */
+@media (max-width: 800px) {
+    .container-wrapper {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .choose-container {
+        width: 90%;
+    }
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 18px;
+    }
+
+    .action-btn {
+        font-size: 14px;
+        padding: 12px;
+    }
+}
+
+

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Project</title>
+    <link rel="stylesheet" href="/css/styles.css">  <!-- 스타일 시트를 별도로 연결 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- 왼쪽 콘텐츠 -->
+<section id="section1">
+    <div class="content">
+        <h1>세라핌</h1>
+        <div class="intro-text">
+            당신의 고유한 목소리가 세라핌을 통해 세상에 울려 퍼집니다.<br>
+            새로운 소통의 시작! 지금 함께하세요.
+        </div>
+        <div class="button-container">
+            <a id="scrollToSection2" data-text="녹음하기">녹음하기</a>
+            <a href="/text-to-speech" data-text="소리내기">소리내기</a>
+        </div>
+    </div>
+
+    <!-- 오른쪽 이미지 -->
+    <div class="image-container">
+        <img src="/img/main.jpg" alt="AI Voice Assistant">
+    </div>
+</section>
+
+<section id="section2">
+    <div class="container-wrapper">
+        <div id="selectUI" class="choose-containers hidden">
+            <h2>다음 중 어떤 방법으로 학습하면 될까요?</h2>
+            <div class="button-container-horizontal">
+                <button id="realTimeRecord" data-text="실시간 녹음">실시간 녹음</button>
+                <button id="useUploadedAudio" data-text="녹음본 사용">녹음본 사용</button>
+            </div>
+        </div>
+        <!-- 실시간 음성 녹음 -->
+        <div id="recordNewContainer" class="container-wrapper hidden">
+            <div id="newUI" class="choose-container hidden">
+                <h2>안녕</h2>
+                <h2>고마워</h2>
+                <h2>좋아</h2>
+                <h2>하나, 둘, 셋</h2>
+                <h2>넷, 다섯, 여섯</h2>
+                <h2>일곱, 여덟, 아홉,열</h2>
+            </div>
+            <div id="recordContainer" class="choose-container hidden">
+                <img src="/img/button.jpg" alt="돌아가기" class="back-button" id="backFromUpload">
+                <h2>시작 버튼을 클릭 후<br> 왼쪽 단어들을 따라말해주세요.<br> 완료 후 중지를 눌러주세요.</h2>
+                <button id="startRecord" class="button">녹음 시작</button>
+                <button id="stopRecord" class="button" disabled>녹음 중지</button>
+                <p id="recordingStatus">녹음 상태: 대기 중</p>
+                <audio id="audioPlayback" controls style="display: none;"></audio>
+                <div style="margin-top: 15px;">
+                    <button id="saveRecording" style="display: none;">목소리 만들기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 파일 업로드 -->
+        <div id="uploadContent" class="choose-container hidden">
+            <img src="/img/button.jpg" alt="돌아가기" class="back-button" id="backFromRecord">
+            <h2>음성 파일 업로드</h2>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <input type="file" name="voiceFile" id="fileInput">
+                <button type="submit" class="button">업로드</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // DOM 요소 참조
+        const selectUI = document.getElementById('selectUI');
+        const recordNewContainer = document.getElementById('recordNewContainer');
+        const recordContainer = document.getElementById('recordContainer');
+        const newUI = document.getElementById('newUI');
+        const uploadContent = document.getElementById('uploadContent');
+        const backFromRecord = document.getElementById('backFromRecord');
+        const backFromUpload = document.getElementById('backFromUpload');
+        const realTimeRecordButton = document.getElementById('realTimeRecord');
+        const useUploadedAudioButton = document.getElementById('useUploadedAudio');
+        const startRecordButton = document.getElementById('startRecord');
+        const stopRecordButton = document.getElementById('stopRecord');
+        const recordingStatus = document.getElementById('recordingStatus');
+        const audioPlayback = document.getElementById('audioPlayback');
+        const saveRecordingButton = document.getElementById('saveRecording');
+
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        // 모든 컨테이너 숨김
+        function resetContainers() {
+            const containers = [selectUI, recordNewContainer, uploadContent, recordContainer, newUI];
+            containers.forEach((container) => {
+                container.classList.add('hidden');
+                container.classList.remove('visible');
+            });
+        }
+
+        // 특정 컨테이너 표시
+        function showElement(element) {
+            element.classList.remove('hidden');
+            element.classList.add('visible');
+        }
+
+        // "녹음하기" 버튼 클릭 시 Section 2로 이동하고 선택 UI 표시
+        document.getElementById('scrollToSection2').addEventListener('click', (event) => {
+            event.preventDefault();
+            const section2 = document.getElementById('section2');
+            section2.scrollIntoView({ behavior: 'smooth' });
+
+            resetContainers(); // 모든 컨테이너 숨김
+            showElement(selectUI); // 선택 UI 표시
+        });
+
+        // "실시간 녹음" 버튼 클릭 시
+        realTimeRecordButton.addEventListener('click', () => {
+            resetContainers(); // 모든 컨테이너 숨김
+            showElement(recordNewContainer); // 녹음 UI 표시
+            showElement(newUI);//따라 말하기 컨테이너
+            showElement(recordContainer); // 녹음 컨테이너
+
+        });
+
+        // "녹음본 사용" 버튼 클릭 시
+        useUploadedAudioButton.addEventListener('click', () => {
+            resetContainers(); // 모든 컨테이너 숨김
+            showElement(uploadContent); // 업로드 UI 표시
+        });
+
+        // 실시간 녹음에서 돌아가기 버튼 클릭
+        backFromRecord.addEventListener('click', () => {
+            resetContainers(); // 모든 컨테이너 숨김
+            showElement(selectUI); // 선택 UI 표시
+        });
+
+        // 녹음본 사용에서 돌아가기 버튼 클릭
+        backFromUpload.addEventListener('click', () => {
+            resetContainers(); // 모든 컨테이너 숨김
+            showElement(selectUI); // 선택 UI 표시
+        });
+
+        // 녹음 시작 버튼
+        startRecordButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+
+                recordedChunks = [];
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) recordedChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    audioPlayback.src = audioUrl;
+                    audioPlayback.style.display = 'block';
+                    saveRecordingButton.style.display = 'inline-block';
+
+                    // 녹음 저장 버튼
+                    saveRecordingButton.addEventListener('click', () => {
+                        // 파일 저장 후 text-to-speech.html로 이동
+                        window.location.href = 'text-to-speech';
+                    });
+                };
+
+                mediaRecorder.start();
+                recordingStatus.textContent = '녹음 상태: 녹음 중...';
+                startRecordButton.disabled = true;
+                stopRecordButton.disabled = false;
+            } catch (error) {
+                alert('마이크 접근 권한이 필요합니다.');
+                console.error('Error accessing microphone:', error);
+            }
+        });
+
+        // 녹음 중지 버튼
+        stopRecordButton.addEventListener('click', () => {
+            mediaRecorder.stop();
+            recordingStatus.textContent = '녹음 상태: 완료';
+            startRecordButton.disabled = false;
+            stopRecordButton.disabled = true;
+        });
+    });
+
+</script>
+
+</body>
+</html>
