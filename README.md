@@ -56,10 +56,16 @@
 ## 실행화면
 ![image](https://github.com/user-attachments/assets/240d508f-a395-4c3f-9ae8-21c393f8dbb0)
 메인화면
+
+
 ![image](https://github.com/user-attachments/assets/bb12b399-a162-4d1c-823a-be85878ba6ce)
 녹음 페이지
+
+
 ![image](https://github.com/user-attachments/assets/9e1a4fb0-753d-425f-9af5-5732aad4746b)
 텍스트 입력 페이지
+
+
 ![image](https://github.com/user-attachments/assets/caa45ea2-e402-435d-8315-c31c56d441d0)
 노래 페이지
 
