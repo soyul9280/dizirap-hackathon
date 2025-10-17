@@ -5,7 +5,7 @@
 
 ## 팀원 소개
 팀장: 제주대학교 오현우 [AI]
-팀원: 제주대학교 전산통계학과 권혁주 [Back-end 70 / Front-end 30] / 제주대학교 강소율 [Back-end / Front-end] / 제주대학교 김지현 [PM]
+팀원: 제주대학교 전산통계학과 권혁주 [Back-end / Front-end] / 제주대학교 강소율 [Back-end / Front-end] / 제주대학교 김지현 [PM]
 ![image](https://github.com/user-attachments/assets/c9cf1f86-46b3-40b0-b39f-51650d550af7)
 
  
